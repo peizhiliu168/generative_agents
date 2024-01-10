@@ -10,6 +10,7 @@ import openai
 import time 
 
 from utils import *
+from persona.prompt_template.local_model import *
 
 openai.api_key = openai_api_key
 
@@ -141,7 +142,10 @@ def ChatGPT_safe_generate_response(prompt,
   for i in range(repeat): 
 
     try: 
-      curr_gpt_response = ChatGPT_request(prompt).strip()
+      if use_local_model:
+        curr_gpt_response = ChatLocalLLM_request(prompt).strip()
+      else:
+        curr_gpt_response = ChatGPT_request(prompt).strip()
       end_index = curr_gpt_response.rfind('}') + 1
       curr_gpt_response = curr_gpt_response[:end_index]
       curr_gpt_response = json.loads(curr_gpt_response)["output"]
@@ -263,7 +267,11 @@ def safe_generate_response(prompt,
     print (prompt)
 
   for i in range(repeat): 
-    curr_gpt_response = GPT_request(prompt, gpt_parameter)
+    if use_local_model:
+      curr_gpt_response = LocalLLM_request(prompt, gpt_parameter)
+    else:
+      curr_gpt_response = GPT_request(prompt, gpt_parameter)
+
     if func_validate(curr_gpt_response, prompt=prompt): 
       return func_clean_up(curr_gpt_response, prompt=prompt)
     if verbose: 
@@ -272,13 +280,21 @@ def safe_generate_response(prompt,
       print ("~~~~")
   return fail_safe_response
 
+def get_GPT_embedding(text, model="text-embedding-ada-002"):
+  return openai.Embedding.create(
+          input=[text], model=model)['data'][0]['embedding']
 
-def get_embedding(text, model="text-embedding-ada-002"):
+def get_embedding(text):
   text = text.replace("\n", " ")
   if not text: 
     text = "this is blank"
-  return openai.Embedding.create(
-          input=[text], model=model)['data'][0]['embedding']
+
+  if use_local_model:
+    embedding = get_LocalLLM_embedding(text)
+  else:
+    embedding = get_GPT_embedding(text)
+
+  return embedding
 
 
 if __name__ == '__main__':

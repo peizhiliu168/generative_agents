@@ -515,7 +515,7 @@ def run_gpt_prompt_action_sector(action_description,
     return True
   
   def get_fail_safe(): 
-    fs = ("kitchen")
+    fs = ("main room")
     return fs
 
   gpt_param = {"engine": "text-davinci-002", "max_tokens": 15, 
@@ -596,7 +596,7 @@ def run_gpt_prompt_action_arena(action_description,
     return True
   
   def get_fail_safe(): 
-    fs = ("kitchen")
+    fs = ("main room")
     return fs
 
   gpt_param = {"engine": "text-davinci-003", "max_tokens": 15, 

@@ -373,9 +373,12 @@ def run_gpt_prompt_task_decomp(persona,
     for count, i in enumerate(_cr): 
       k = [j.strip() for j in i.split("(duration in minutes:")]
       task = k[0]
+      print("task: ", task)
       if task[-1] == ".": 
         task = task[:-1]
-      duration = int(k[1].split(",")[0].strip())
+        
+      duration_str = k[1].split(",")[0].strip()
+      duration = int(''.join(filter(lambda i: i.isdigit(), duration_str)))
       cr += [[task, duration]]
 
     total_expected_min = int(prompt.split("(total duration in minutes")[-1]
@@ -566,7 +569,7 @@ def run_gpt_prompt_action_sector(action_description,
     return True
   
   def get_fail_safe(): 
-    fs = ("kitchen")
+    fs = ("main room")
     return fs
 
 
@@ -695,16 +698,23 @@ def run_gpt_prompt_action_arena(action_description,
       return False
     return True
   
-  def get_fail_safe(): 
-    fs = ("kitchen")
+  def get_fail_safe():
+    x = f"{act_world}:{act_sector}"
+    accessible_arena_str = persona.s_mem.get_str_accessible_sector_arenas(x) 
+    fs = 'kitchen'
+    if len(accessible_arena_str):
+      fs = (accessible_arena_str.split(',')[0].strip())
     return fs
 
   gpt_param = {"engine": "text-davinci-003", "max_tokens": 15, 
-               "temperature": 0, "top_p": 1, "stream": False,
+               "temperature": 0, "top_p": 0.8, "stream": False,
                "frequency_penalty": 0, "presence_penalty": 0, "stop": None}
   prompt_template = "persona/prompt_template/v1/action_location_object_vMar11.txt"
   prompt_input = create_prompt_input(action_description, persona, maze, act_world, act_sector)
   prompt = generate_prompt(prompt_input, prompt_template)
+  print("====== prompt ======")
+  print(prompt)
+  print("====== end prompt ======")
 
   fail_safe = get_fail_safe()
   output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
