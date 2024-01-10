@@ -692,10 +692,6 @@ def run_gpt_prompt_action_arena(action_description,
   def __func_validate(gpt_response, prompt=""): 
     if len(gpt_response.strip()) < 1: 
       return False
-    if "}" not in gpt_response:
-      return False
-    if "," in gpt_response: 
-      return False
     return True
   
   def get_fail_safe():
@@ -717,8 +713,25 @@ def run_gpt_prompt_action_arena(action_description,
   print("====== end prompt ======")
 
   fail_safe = get_fail_safe()
-  output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
+  raw_output = safe_generate_response(prompt, gpt_param, 5, fail_safe,
                                    __func_validate, __func_clean_up)
+  
+  output = None
+
+  x = f"{act_world}:{act_sector}"
+  accessible_arena_str = persona.s_mem.get_str_accessible_sector_arenas(x) 
+  for space in accessible_arena_str.split(','):
+    space = space.strip()
+    if space in raw_output:
+      output = space
+      break
+
+  if not output:
+    if accessible_arena_str:
+      output = accessible_arena_str.split(',')[0].strip()
+    else:
+      output = 'kitchen'
+
   print (output)
   # y = f"{act_world}:{act_sector}"
   # x = [i.strip() for i in persona.s_mem.get_str_accessible_sector_arenas(y).split(",")]

@@ -64,6 +64,14 @@ def cos_sim(a, b):
     a = [0.3, 0.2, 0.5]
     b = [0.2, 0.2, 0.5]
   """
+  if not a and not b:
+    return 0.0
+  if not a:
+    a = [0.0] * len(b)
+  if not b:
+    b = [0.0] * len(a)
+
+
   return dot(a, b)/(norm(a)*norm(b))
 
 
@@ -191,6 +199,7 @@ def extract_relevance(persona, nodes, focal_pt):
   relevance_out = dict()
   for count, node in enumerate(nodes): 
     node_embedding = persona.a_mem.embeddings[node.embedding_key]
+    print("node_embedding: ", node_embedding, "focal_embedding: ", focal_embedding)
     relevance_out[node.node_id] = cos_sim(node_embedding, focal_embedding)
 
   return relevance_out
