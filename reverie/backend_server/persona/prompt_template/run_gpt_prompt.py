@@ -54,7 +54,15 @@ def run_gpt_prompt_wake_up_hour(persona, test_input=None, verbose=False):
     return prompt_input
 
   def __func_clean_up(gpt_response, prompt=""):
-    cr = int(gpt_response.strip().lower().split("am")[0])
+    cr = None
+    for word in gpt_response.split():
+      try:
+        cr = int(word.strip().lower().split("am")[0])
+        break
+      except ValueError:
+        pass
+    if cr == None:
+      raise Exception("Invalid wakeup time")
     return cr
   
   def __func_validate(gpt_response, prompt=""): 
