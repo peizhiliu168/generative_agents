@@ -180,7 +180,10 @@ def ChatGPT_safe_generate_response_OLD(prompt,
 
   for i in range(repeat): 
     try: 
-      curr_gpt_response = ChatGPT_request(prompt).strip()
+      if use_local_model:
+        curr_gpt_response = ChatLocalLLM_request(prompt).strip()
+      else:
+        curr_gpt_response = ChatGPT_request(prompt).strip()
       if func_validate(curr_gpt_response, prompt=prompt): 
         return func_clean_up(curr_gpt_response, prompt=prompt)
       if verbose: 
