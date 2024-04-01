@@ -1,11 +1,21 @@
-# Running Local Models
+# Running AI Town with Local Models
 With the increased prevalence of open-source models, the following project has been modified to support local LLMs via Ollama's API endpoints. This includes various functionality such as completion, chat, and embedding generation. There are, however, additional Ollama API endpoints that can be leveraged in the future. 
+
+## Hardware/Software Requirements
+Hardware and software requirements for both client-side simulation and LLM server are listed below
+- Client-side simulation
+  - Python version 3.9.12 as listed in README.md
+  - Python packages as listed in requirements.txt
+- LLM Server running Ollama
+  - Ollama supports Linux, MacOS, and Windows (preview)
+  - Recommended hardware for LLM server can be found [here](https://github.com/open-webui/open-webui/discussions/736)
+  - If CUDA-enabled GPU is available, a more recent version of CUDA is recommended (e.g. 11.0 - 12.0)
 
 ## Installing Ollama
 To host LLMs on a local machine, you will need to install Ollama on the machine and start the Ollama server
 
 ### Step 1. Installing Ollama
-Ollama can be found at https://ollama.ai/ with Linux and MacOS currently supported. In a Linux environment, Ollama can be installed via the following command.
+Ollama can be found at https://ollama.ai/ with Linux and MacOS currently supported (Windows version in preview). In a Linux environment, Ollama can be installed via the following command.
 ```
 $ curl https://ollama.ai/install.sh | sh
 ```
